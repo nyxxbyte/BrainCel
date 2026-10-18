@@ -38,11 +38,13 @@
     }
 </style>
 
-<div class="cozy-card" style="max-width: 540px; width: 100%; margin: 0 auto;">
+<!-- Added main-app-wrapper and mx-auto to the very first line -->
+<div class="cozy-card main-app-wrapper mx-auto" style="max-width: 540px; width: 100%;">
     <div class="organic-blob blob-1"></div>
     <div class="organic-blob blob-2"></div>
 
-    <div class="card-content p-4">
+    <!-- Added d-flex flex-column h-100 to make the inside stretch to the bottom -->
+    <div class="card-content p-3 p-md-4 d-flex flex-column h-100">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <span class="fw-bold fs-4" style="background: var(--braincel-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
@@ -69,40 +71,44 @@
             </li>
         </ul>
 
-        <div class="tab-content" id="appTabsContent">
+        <div class="tab-content flex-grow-1" id="appTabsContent">
             <!-- TAB 1: AI ASSISTANT -->
-            <div class="tab-pane fade {% if not request.GET.city %}show active{% endif %}" id="ai-content" role="tabpanel">
-                <div class="chat-container mb-3 p-3 rounded-4" id="chatWindow" style="height: 340px; overflow-y: auto; background: #f8f9fc; border: 1px solid rgba(108, 92, 231, 0.1);">
-                    <div class="ai-msg mb-3 p-3 rounded-4 shadow-sm" style="background: #ffffff; border-left: 4px solid var(--braincel-purple);">
-                        <div class="fw-bold small mb-1" style="color: var(--braincel-purple);"><i class="bi bi-robot me-1"></i>BrainCel AI</div>
-                        <div class="small text-dark">Hi {{ user.first_name|default:user.username }}! Ready to explore today? Ask me any questions, science topics, or weather tips!</div>
+            <!-- Note: We wrap the inside of the tab in a flex column so it pushes the input to the bottom -->
+            <div class="tab-pane fade {% if not request.GET.city %}show active{% endif %} h-100" id="ai-content" role="tabpanel">
+                <div class="d-flex flex-column h-100">
+                    <!-- CHANGED: Replaced height: 340px with flex-grow-1 so it takes up all dynamic screen space -->
+                    <div class="chat-container flex-grow-1 mb-3 p-3 rounded-4" id="chatWindow" style="overflow-y: auto; background: #f8f9fc; border: 1px solid rgba(108, 92, 231, 0.1);">
+                        <div class="ai-msg mb-3 p-3 rounded-4 shadow-sm" style="background: #ffffff; border-left: 4px solid var(--braincel-purple);">
+                            <div class="fw-bold small mb-1" style="color: var(--braincel-purple);"><i class="bi bi-robot me-1"></i>BrainCel AI</div>
+                            <div class="small text-dark">Hi {{ user.first_name|default:user.username }}! Ready to explore today? Ask me any questions, science topics, or weather tips!</div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Quick Prompt Chips -->
-                <div class="d-flex gap-2 overflow-x-auto pb-2 mb-3" style="white-space: nowrap;">
-                    <button type="button" class="btn btn-sm btn-light rounded-pill border text-muted small px-3" onclick="usePreset('Why are leaves green?')">Why are leaves green?</button>
-                    <button type="button" class="btn btn-sm btn-light rounded-pill border text-muted small px-3" onclick="usePreset('Give me a study tip')">Give me a study tip</button>
-                    <button type="button" class="btn btn-sm btn-light rounded-pill border text-muted small px-3" onclick="usePreset('Explain photosynthesis simply')">Explain photosynthesis</button>
-                </div>
-
-                <!-- Input Form -->
-                <form id="chatForm" onsubmit="submitChat(event)">
-                    {% csrf_token %}
-                    <div class="input-group shadow-sm rounded-pill p-1" style="background: white; border: 1px solid rgba(108, 92, 231, 0.2);">
-                        <button type="button" class="btn btn-light text-muted border-0 rounded-circle ms-1" onclick="clearChat()" title="Clear Chat">
-                            <i class="bi bi-eraser-fill"></i>
-                        </button>
-                        <input type="text" id="userInput" class="form-control border-0 bg-transparent shadow-none px-3" placeholder="Ask BrainCel anything..." required>
-                        <button type="submit" id="sendBtn" class="btn btn-braincel rounded-pill px-4 me-1">
-                            <i class="bi bi-send-fill"></i>
-                        </button>
+                    <!-- Quick Prompt Chips -->
+                    <div class="d-flex gap-2 overflow-x-auto pb-2 mb-3" style="white-space: nowrap;">
+                        <button type="button" class="btn btn-sm btn-light rounded-pill border text-muted small px-3" onclick="usePreset('Why are leaves green?')">Why are leaves green?</button>
+                        <button type="button" class="btn btn-sm btn-light rounded-pill border text-muted small px-3" onclick="usePreset('Give me a study tip')">Give me a study tip</button>
+                        <button type="button" class="btn btn-sm btn-light rounded-pill border text-muted small px-3" onclick="usePreset('Explain photosynthesis simply')">Explain photosynthesis</button>
                     </div>
-                </form>
+
+                    <!-- Input Form (This will now stick to the bottom) -->
+                    <form id="chatForm" onsubmit="submitChat(event)" class="mt-auto">
+                        {% csrf_token %}
+                        <div class="input-group shadow-sm rounded-pill p-1" style="background: white; border: 1px solid rgba(108, 92, 231, 0.2);">
+                            <button type="button" class="btn btn-light text-muted border-0 rounded-circle ms-1" onclick="clearChat()" title="Clear Chat">
+                                <i class="bi bi-eraser-fill"></i>
+                            </button>
+                            <input type="text" id="userInput" class="form-control border-0 bg-transparent shadow-none px-3" placeholder="Ask BrainCel anything..." required>
+                            <button type="submit" id="sendBtn" class="btn btn-braincel rounded-pill px-4 me-1">
+                                <i class="bi bi-send-fill"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <!-- TAB 2: WEATHER DASHBOARD -->
-            <div class="tab-pane fade {% if request.GET.city %}show active{% endif %} text-center" id="weather-content" role="tabpanel">
+            <div class="tab-pane fade {% if request.GET.city %}show active{% endif %} text-center h-100 overflow-y-auto" id="weather-content" role="tabpanel">
                 <form method="GET" class="mb-4">
                     <div class="input-group shadow-sm rounded-pill p-1" style="background: white; border: 1px solid rgba(108, 92, 231, 0.2);">
                         <input type="text" name="city" class="form-control border-0 bg-transparent shadow-none px-4" placeholder="Enter city name..." value="{{ city }}">
