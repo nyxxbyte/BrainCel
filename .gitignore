@@ -1,0 +1,22 @@
+# Environment variables (API Keys & Secrets)
+.env
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Python / Django runtime
+__pycache__/
+*.py[cod]
+*$py.class
+db.sqlite3
+
+# Static & Media files
+/static_collected/
+/media/
+
+# IDE / System files
+.vscode/
+.idea/
+.DS_Store
