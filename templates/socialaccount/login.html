@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In Confirmation - BrainCel{% endblock %}
+
+{% block content %}
+<div class="cozy-card">
+    <div class="organic-blob blob-1"></div>
+    <div class="organic-blob blob-2"></div>
+    <div class="card-content">
+        <h2 class="brand-title mb-1 fw-bold">Connecting Account</h2>
+        <p class="text-muted small mb-4">You are signing in using a third-party service.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-cozy w-100 py-2.5">Continue to BrainCel</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

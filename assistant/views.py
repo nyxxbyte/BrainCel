@@ -18,7 +18,7 @@ def register_view(request):
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            first_name = form.cleaned_data['first_name']
+            first_name = form.cleaned_data.get('first_name', '')
 
             if User.objects.filter(username=username).exists():
                 messages.error(request, "Username is already taken.")
@@ -31,9 +31,14 @@ def register_view(request):
                     password=password,
                     first_name=first_name
                 )
-                login(request, user)
-                messages.success(request, f"Welcome, {user.first_name}!")
+                user.save()
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                messages.success(request, f"Welcome to BrainCel, {user.first_name or user.username}!")
                 return redirect('index')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")
     else:
         form = SignUpForm()
     return render(request, 'register.html', {'form': form})
@@ -49,11 +54,13 @@ def login_view(request):
             
             user_obj = User.objects.filter(email=user_input).first() or User.objects.filter(username=user_input).first()
             if user_obj:
-                user = authenticate(username=user_obj.username, password=password)
-                if user:
+                user = authenticate(request, username=user_obj.username, password=password)
+                if user is not None:
                     login(request, user)
                     return redirect('index')
             messages.error(request, "Invalid username/email or password.")
+        else:
+            messages.error(request, "Please check your login input.")
     else:
         form = SignInForm()
     return render(request, 'login.html', {'form': form})
@@ -114,17 +121,36 @@ def gemini_chat_api(request):
         headers = {"Content-Type": "application/json"}
         payload = {"contents": [{"parts": [{"text": prompt}]}]}
 
-        endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={gemini_key}"
+        endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={gemini_key}"
 
         try:
-            res = requests.post(endpoint, json=payload, headers=headers, timeout=10)
+            res = requests.post(endpoint, json=payload, headers=headers, timeout=(10, 30))
             if res.status_code == 200:
                 res_data = res.json()
                 reply = res_data['candidates'][0]['content']['parts'][0]['text']
                 return JsonResponse({'reply': reply})
 
+            fallback = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key={gemini_key}"
+            res_fb = requests.post(fallback, json=payload, headers=headers, timeout=(10, 30))
+            if res_fb.status_code == 200:
+                res_data = res_fb.json()
+                reply = res_data['candidates'][0]['content']['parts'][0]['text']
+                return JsonResponse({'reply': reply})
+
             err_msg = res.json().get('error', {}).get('message', res.text)
             return JsonResponse({'error': f'Gemini API Access Error: {err_msg}'}, status=500)
+
+        except requests.exceptions.Timeout:
+            try:
+                fallback = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key={gemini_key}"
+                res_fb = requests.post(fallback, json=payload, headers=headers, timeout=(5, 15))
+                if res_fb.status_code == 200:
+                    res_data = res_fb.json()
+                    reply = res_data['candidates'][0]['content']['parts'][0]['text']
+                    return JsonResponse({'reply': reply})
+            except Exception:
+                pass
+            return JsonResponse({'error': 'Gemini API timed out. Please send your prompt again.'}, status=504)
 
         except Exception as e:
             return JsonResponse({'error': f'Connection error: {str(e)}'}, status=500)
@@ -133,7 +159,7 @@ def gemini_chat_api(request):
 
 def serviceworker_view(request):
     sw_code = """
-const CACHE_NAME = 'cozy-ai-pwa-v1';
+const CACHE_NAME = 'braincel-pwa-v1';
 const urlsToCache = [
   '/',
   '/login/',

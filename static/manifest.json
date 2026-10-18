@@ -1,6 +1,6 @@
 {
-  "name": "Cozy AI & Weather Assistant",
-  "short_name": "CozyAI",
+  "name": "BrainCel AI & Weather Assistant",
+  "short_name": "BrainCel",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1a1b3a",

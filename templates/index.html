@@ -1,28 +1,69 @@
 {% extends 'base.html' %}
 
-{% block title %}Cozy AI & Weather Dashboard{% endblock %}
+{% block title %}BrainCel Dashboard{% endblock %}
 
 {% block content %}
-<div class="cozy-card" style="max-width: 540px; width: 100%;">
+<style>
+    :root {
+        --braincel-purple: #6c5ce7;
+        --braincel-blue: #3b82f6;
+        --braincel-gradient: linear-gradient(135deg, #6c5ce7, #3b82f6);
+    }
+    .nav-pills .nav-link.active {
+        background: var(--braincel-gradient) !important;
+        color: white !important;
+        box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+    }
+    .nav-pills .nav-link {
+        color: var(--braincel-purple);
+        transition: all 0.3s ease;
+    }
+    .btn-braincel {
+        background: var(--braincel-gradient);
+        color: white;
+        border: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-braincel:hover {
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(108, 92, 231, 0.4);
+    }
+    .card-content {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(108, 92, 231, 0.1);
+    }
+</style>
+
+<div class="cozy-card" style="max-width: 540px; width: 100%; margin: 0 auto;">
     <div class="organic-blob blob-1"></div>
     <div class="organic-blob blob-2"></div>
 
-    <div class="card-content">
+    <div class="card-content p-4">
         <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <span class="fw-bold brand-title fs-5"><i class="bi bi-stars me-1"></i>Cozy Workspace</span>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <span class="fw-bold fs-4" style="background: var(--braincel-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                <i class="bi bi-stars me-1 text-primary"></i>BrainCel
+            </span>
             <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm rounded-pill px-3">Logout</a>
         </div>
 
+        <div id="offlineAlert" class="alert alert-danger d-none text-center rounded-4 shadow-sm mb-3" style="border: 2px solid #dc3545;">
+            <i class="bi bi-wifi-off me-2"></i><strong>You are currently offline.</strong> Some features may be unavailable.
+        </div>
+
         <!-- Navigation Tabs -->
-        <ul class="nav nav-pills nav-justified mb-3 p-1 rounded-4" style="background: rgba(108, 92, 231, 0.1);" id="appTabs" role="tablist">
+        <ul class="nav nav-pills nav-justified mb-4 p-1 rounded-4 shadow-sm" style="background: rgba(108, 92, 231, 0.05);" id="appTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active rounded-3 fw-semibold py-2" id="ai-tab" data-bs-toggle="pill" data-bs-target="#ai-content" type="button" role="tab">
+                <button class="nav-link {% if not request.GET.city %}active{% endif %} rounded-pill fw-semibold py-2" id="ai-tab" data-bs-toggle="pill" data-bs-target="#ai-content" type="button" role="tab">
                     <i class="bi bi-robot me-1"></i>AI Assistant
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link rounded-3 fw-semibold py-2" id="weather-tab" data-bs-toggle="pill" data-bs-target="#weather-content" type="button" role="tab">
+                <button class="nav-link {% if request.GET.city %}active{% endif %} rounded-pill fw-semibold py-2" id="weather-tab" data-bs-toggle="pill" data-bs-target="#weather-content" type="button" role="tab">
                     <i class="bi bi-cloud-sun me-1"></i>Weather
                 </button>
             </li>
@@ -30,16 +71,16 @@
 
         <div class="tab-content" id="appTabsContent">
             <!-- TAB 1: AI ASSISTANT -->
-            <div class="tab-pane fade show active" id="ai-content" role="tabpanel">
-                <div class="chat-container mb-3 p-3 rounded-4" id="chatWindow" style="height: 320px; overflow-y: auto; background: rgba(248, 249, 250, 0.85); border: 1px solid rgba(0,0,0,0.05);">
-                    <div class="ai-msg mb-3 p-3 rounded-4 shadow-sm" style="background: #ffffff; border-left: 4px solid var(--purple-main);">
-                        <div class="fw-bold small mb-1 text-primary"><i class="bi bi-robot me-1"></i>Cozy Assistant</div>
+            <div class="tab-pane fade {% if not request.GET.city %}show active{% endif %}" id="ai-content" role="tabpanel">
+                <div class="chat-container mb-3 p-3 rounded-4" id="chatWindow" style="height: 340px; overflow-y: auto; background: #f8f9fc; border: 1px solid rgba(108, 92, 231, 0.1);">
+                    <div class="ai-msg mb-3 p-3 rounded-4 shadow-sm" style="background: #ffffff; border-left: 4px solid var(--braincel-purple);">
+                        <div class="fw-bold small mb-1" style="color: var(--braincel-purple);"><i class="bi bi-robot me-1"></i>BrainCel AI</div>
                         <div class="small text-dark">Hi {{ user.first_name|default:user.username }}! Ready to explore today? Ask me any questions, science topics, or weather tips!</div>
                     </div>
                 </div>
 
                 <!-- Quick Prompt Chips -->
-                <div class="d-flex gap-1 overflow-x-auto pb-2 mb-2" style="white-space: nowrap;">
+                <div class="d-flex gap-2 overflow-x-auto pb-2 mb-3" style="white-space: nowrap;">
                     <button type="button" class="btn btn-sm btn-light rounded-pill border text-muted small px-3" onclick="usePreset('Why are leaves green?')">Why are leaves green?</button>
                     <button type="button" class="btn btn-sm btn-light rounded-pill border text-muted small px-3" onclick="usePreset('Give me a study tip')">Give me a study tip</button>
                     <button type="button" class="btn btn-sm btn-light rounded-pill border text-muted small px-3" onclick="usePreset('Explain photosynthesis simply')">Explain photosynthesis</button>
@@ -48,12 +89,12 @@
                 <!-- Input Form -->
                 <form id="chatForm" onsubmit="submitChat(event)">
                     {% csrf_token %}
-                    <div class="input-group">
-                        <input type="text" id="userInput" class="form-control custom-input" placeholder="Ask a question..." required>
-                        <button type="button" class="btn btn-outline-secondary px-3" onclick="clearChat()" style="border-radius: 16px 0 0 16px;">
-                            <i class="bi bi-x-circle"></i> Clear
+                    <div class="input-group shadow-sm rounded-pill p-1" style="background: white; border: 1px solid rgba(108, 92, 231, 0.2);">
+                        <button type="button" class="btn btn-light text-muted border-0 rounded-circle ms-1" onclick="clearChat()" title="Clear Chat">
+                            <i class="bi bi-eraser-fill"></i>
                         </button>
-                        <button type="submit" id="sendBtn" class="btn btn-cozy px-4" style="width: auto; border-radius: 0 16px 16px 0;">
+                        <input type="text" id="userInput" class="form-control border-0 bg-transparent shadow-none px-3" placeholder="Ask BrainCel anything..." required>
+                        <button type="submit" id="sendBtn" class="btn btn-braincel rounded-pill px-4 me-1">
                             <i class="bi bi-send-fill"></i>
                         </button>
                     </div>
@@ -61,38 +102,39 @@
             </div>
 
             <!-- TAB 2: WEATHER DASHBOARD -->
-            <div class="tab-pane fade text-center" id="weather-content" role="tabpanel">
-                <form method="GET" class="mb-3">
-                    <div class="input-group">
-                        <input type="text" name="city" class="form-control custom-input" placeholder="Enter city name..." value="{{ city }}">
-                        <button class="btn btn-cozy px-4" type="submit" style="width: auto;">
-                            <i class="bi bi-search"></i>
+            <div class="tab-pane fade {% if request.GET.city %}show active{% endif %} text-center" id="weather-content" role="tabpanel">
+                <form method="GET" class="mb-4">
+                    <div class="input-group shadow-sm rounded-pill p-1" style="background: white; border: 1px solid rgba(108, 92, 231, 0.2);">
+                        <input type="text" name="city" class="form-control border-0 bg-transparent shadow-none px-4" placeholder="Enter city name..." value="{{ city }}">
+                        <button class="btn btn-braincel rounded-pill px-4 me-1" type="submit">
+                            <i class="bi bi-search"></i> Search
                         </button>
                     </div>
                 </form>
 
                 {% if weather.error %}
-                    <div class="alert alert-danger rounded-4 py-3 text-start">
+                    <div class="alert alert-danger rounded-4 py-3 text-start shadow-sm border-0">
                         <i class="bi bi-exclamation-triangle-fill me-2"></i><strong>Error:</strong> {{ weather.error }}
                     </div>
                 {% else %}
-                    <div class="p-4 rounded-4" style="background: rgba(108, 92, 231, 0.08); border: 1px solid rgba(108, 92, 231, 0.15);">
-                        <h4 class="fw-bold mb-1" style="color: var(--purple-dark);">{{ weather.city }}, {{ weather.country }}</h4>
-                        <p class="text-muted small mb-1">{{ weather.description }}</p>
+                    <div class="p-4 rounded-4 shadow-sm" style="background: linear-gradient(to bottom right, #ffffff, #f0f3ff); border: 1px solid rgba(59, 130, 246, 0.15);">
+                        <h4 class="fw-bold mb-1" style="color: var(--braincel-purple);">{{ weather.city }}, {{ weather.country }}</h4>
+                        <p class="text-muted small mb-1 text-capitalize">{{ weather.description }}</p>
                         
                         {% if weather.icon %}
-                            <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="weather icon" style="width: 80px; height: 80px;">
+                            <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@4x.png" alt="weather icon" class="drop-shadow" style="width: 120px; height: 120px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));">
                         {% endif %}
 
-                        <h1 class="display-5 fw-bold my-1" style="color: var(--purple-main);">{{ weather.temp }}°C</h1>
+                        <h1 class="display-4 fw-bold my-2" style="background: var(--braincel-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ weather.temp }}°C</h1>
                         
-                        <div class="d-flex justify-content-around mt-3 pt-2 border-top text-muted small">
-                            <div><i class="bi bi-thermometer-half"></i> Feels like: <strong>{{ weather.feels_like }}°C</strong></div>
-                            <div><i class="bi bi-droplet-fill"></i> Humidity: <strong>{{ weather.humidity }}%</strong></div>
+                        <div class="d-flex justify-content-around mt-4 pt-3 border-top text-muted small">
+                            <div class="px-2"><i class="bi bi-thermometer-half" style="color: var(--braincel-purple);"></i> Feels like<br><strong class="fs-6 text-dark">{{ weather.feels_like }}°C</strong></div>
+                            <div class="border-end"></div>
+                            <div class="px-2"><i class="bi bi-droplet-fill" style="color: var(--braincel-blue);"></i> Humidity<br><strong class="fs-6 text-dark">{{ weather.humidity }}%</strong></div>
                         </div>
 
-                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill mt-3 w-100 fw-semibold" onclick="askAIAboutWeather('{{ weather.city }}', '{{ weather.temp }}', '{{ weather.description }}')">
-                            ✨ Ask AI for Outfit & Activity Tips
+                        <button type="button" class="btn btn-outline-primary rounded-pill mt-4 w-100 fw-semibold py-2" onclick="askAIAboutWeather('{{ weather.city }}', '{{ weather.temp }}', '{{ weather.description }}')" style="border-color: var(--braincel-blue); color: var(--braincel-blue);">
+                            ✨ Ask BrainCel for Outfit & Activity Tips
                         </button>
                     </div>
                 {% endif %}
@@ -109,8 +151,8 @@
 
     function clearChat() {
         document.getElementById('chatWindow').innerHTML = `
-            <div class="ai-msg mb-3 p-3 rounded-4 shadow-sm" style="background: #ffffff; border-left: 4px solid var(--purple-main);">
-                <div class="fw-bold small mb-1 text-primary"><i class="bi bi-robot me-1"></i>Cozy Assistant</div>
+            <div class="ai-msg mb-3 p-3 rounded-4 shadow-sm" style="background: #ffffff; border-left: 4px solid var(--braincel-purple);">
+                <div class="fw-bold small mb-1" style="color: var(--braincel-purple);"><i class="bi bi-robot me-1"></i>BrainCel AI</div>
                 <div class="small text-dark">Chat cleared! Ask me anything whenever you are ready.</div>
             </div>`;
     }
@@ -140,19 +182,19 @@
 
         // Display User Message
         chatWindow.innerHTML += `
-            <div class="user-msg mb-3 p-3 rounded-4 shadow-sm text-end ms-auto" style="background: linear-gradient(135deg, var(--purple-main), #3b82f6); color: white; max-width: 85%;">
+            <div class="user-msg mb-3 p-3 rounded-4 shadow-sm text-end ms-auto" style="background: var(--braincel-gradient); color: white; max-width: 85%;">
                 <div class="fw-bold small mb-1" style="opacity: 0.9;">You</div>
                 <div class="small">${promptText}</div>
             </div>`;
         
         chatWindow.scrollTop = chatWindow.scrollHeight;
 
-        // Display Loading Indicator
+        // Display Loading Indicator with the new 'msg-content' class
         const loadingId = 'loading-' + Date.now();
         chatWindow.innerHTML += `
-            <div id="${loadingId}" class="ai-msg mb-3 p-3 rounded-4 shadow-sm" style="background: #ffffff; border-left: 4px solid var(--purple-main);">
-                <div class="fw-bold small mb-1 text-primary"><i class="bi bi-robot me-1"></i>Cozy Assistant</div>
-                <div class="small text-muted"><span class="spinner-border spinner-border-sm me-2"></span>Thinking...</div>
+            <div id="${loadingId}" class="ai-msg mb-3 p-3 rounded-4 shadow-sm" style="background: #ffffff; border-left: 4px solid var(--braincel-purple);">
+                <div class="fw-bold small mb-1" style="color: var(--braincel-purple);"><i class="bi bi-robot me-1"></i>BrainCel AI</div>
+                <div class="small text-muted msg-content"><span class="spinner-border spinner-border-sm me-2"></span>Thinking...</div>
             </div>`;
         chatWindow.scrollTop = chatWindow.scrollHeight;
 
@@ -168,19 +210,38 @@
         .then(res => res.json())
         .then(data => {
             const loadingElem = document.getElementById(loadingId);
+            const msgContent = loadingElem.querySelector('.msg-content'); // Target only the message body
+            
             if (data.reply) {
                 const formattedReply = data.reply.replace(/\n/g, '<br>');
-                loadingElem.querySelector('.small').innerHTML = formattedReply;
+                msgContent.innerHTML = formattedReply;
+                msgContent.classList.remove('text-muted'); // Remove grey text
+                msgContent.classList.add('text-dark');     // Make the text black
             } else {
-                loadingElem.querySelector('.small').innerHTML = `<span class="text-danger">Error: ${data.error || 'Failed to generate response.'}</span>`;
+                msgContent.innerHTML = `<span class="text-danger">Error: ${data.error || 'Failed to generate response.'}</span>`;
             }
             chatWindow.scrollTop = chatWindow.scrollHeight;
         })
         .catch(err => {
             const loadingElem = document.getElementById(loadingId);
-            loadingElem.querySelector('.small').innerHTML = `<span class="text-danger">Error connecting to Gemini API server.</span>`;
+            loadingElem.querySelector('.msg-content').innerHTML = `<span class="text-danger">Error connecting to server.</span>`;
             chatWindow.scrollTop = chatWindow.scrollHeight;
         });
     }
+
+    window.addEventListener('offline', function() {
+        document.getElementById('offlineAlert').classList.remove('d-none');
+    });
+
+    window.addEventListener('online', function() {
+        document.getElementById('offlineAlert').classList.add('d-none');
+    });
+
+    // Check status immediately on page load
+    if (!navigator.onLine) {
+        document.getElementById('offlineAlert').classList.remove('d-none');
+    }
+
 </script>
+
 {% endblock %}
