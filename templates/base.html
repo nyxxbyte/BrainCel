@@ -4,124 +4,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}BrainCel{% endblock %}</title>
-    
     <link rel="manifest" href="/static/manifest.json">
     <meta name="theme-color" content="#6c5ce7">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-<style>
-    :root {
-        --purple-dark: #2c1e4a;
-        --purple-main: #6c5ce7;
-        --purple-soft: #a88beb;
-        --blue-soft: #74b9ff;
-        --blue-light: #e0f7fa;
-        --card-bg: rgba(255, 255, 255, 0.95);
-        --text-dark: #2d3436;
-    }
+    <style>
+        :root {
+            --purple-dark: #2c1e4a;
+            --purple-main: #6c5ce7;
+            --purple-soft: #a88beb;
+            --blue-soft: #74b9ff;
+            --blue-light: #e0f7fa;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-dark: #2d3436;
+        }
 
-    /* =========================================
-       DESKTOP VIEW (Floating 540px Card)
-       ========================================= */
-    body {
-        margin: 0;
-        padding: 0;
-        background: linear-gradient(135deg, var(--purple-dark), #1e1b4b, #0f172a);
-        height: 100vh;
-        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        color: var(--text-dark);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden; /* Prevents background scrolling */
-    }
-
-    .cozy-card {
-        background: var(--card-bg);
-        backdrop-filter: blur(16px);
-        border-radius: 28px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-        border: 1px solid rgba(255, 255, 255, 0.25);
-        width: 100%;
-        max-width: 540px; /* Locks width for desktop */
-        height: 90vh; /* Floating height for desktop */
-        padding: 1.5rem;
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column; /* Keeps chat box at the bottom */
-    }
-
-    /* Component Styles */
-    .organic-blob {
-        position: absolute; width: 200px; height: 200px;
-        background: linear-gradient(135deg, var(--purple-soft), var(--blue-soft));
-        opacity: 0.3; filter: blur(45px); border-radius: 50%; z-index: 0;
-    }
-    .blob-1 { top: -50px; right: -50px; }
-    .blob-2 { bottom: -50px; left: -50px; }
-    
-    .card-content { position: relative; z-index: 1; flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
-    
-    .brand-title { font-weight: 700; background: linear-gradient(45deg, var(--purple-main), #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .custom-input { border-radius: 16px; padding: 12px 18px; border: 1.5px solid #e2e8f0; background: #f8fafc; transition: all 0.3s ease; }
-    .custom-input:focus { border-color: var(--purple-main); box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15); background: #ffffff; }
-    .btn-cozy { background: linear-gradient(135deg, var(--purple-main), #3b82f6); color: #fff; border: none; border-radius: 18px; padding: 12px 24px; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; width: 100%; }
-    .btn-cozy:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(108, 92, 231, 0.4); color: #fff; }
-    .nav-pills .nav-link.active { background-color: var(--purple-main) !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
-    .nav-pills .nav-link { color: var(--text-dark); }
-    #offlineBanner { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999; display: none; width: 90%; max-width: 420px; }
-
-    /* =========================================
-       MOBILE VIEW (Edge-to-Edge ChatGPT Style)
-       ========================================= */
-    @media (max-width: 768px) {
+        /* DESKTOP VIEW (Floating 540px Card) */
         body {
-            background: #ffffff; /* Matches card background to hide corners */
-            display: block;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--purple-dark), #1e1b4b, #0f172a);
+            height: 100vh;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Prevents background scrolling */
         }
-        
+
         .cozy-card {
-            max-width: 100% !important; /* Removes the 540px limit */
-            height: 100dvh !important; /* Dynamic viewport height locks to phone screen */
-            border-radius: 0 !important; /* Removes curved corners */
-            border: none !important;
-            box-shadow: none !important;
-            padding: 1rem !important; /* Tighter padding for small screens */
-            margin: 0 !important;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border-radius: 28px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            width: 100%;
+            max-width: 540px; /* Locks width for desktop */
+            height: 90vh; /* Floating height for desktop */
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column; /* Keeps chat box at the bottom */
         }
-        
-        /* Optional: Hide blobs on mobile to give more readable space */
+
+        /* Component Styles */
         .organic-blob {
-            display: none;
+            position: absolute; width: 200px; height: 200px;
+            background: linear-gradient(135deg, var(--purple-soft), var(--blue-soft));
+            opacity: 0.3; filter: blur(45px); border-radius: 50%; z-index: 0;
         }
-    }
+        .blob-1 { top: -50px; right: -50px; }
+        .blob-2 { bottom: -50px; left: -50px; }
+        
+        .card-content { position: relative; z-index: 1; flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
+        
+        .brand-title { font-weight: 700; background: linear-gradient(45deg, var(--purple-main), #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .custom-input { border-radius: 16px; padding: 12px 18px; border: 1.5px solid #e2e8f0; background: #f8fafc; transition: all 0.3s ease; }
+        .custom-input:focus { border-color: var(--purple-main); box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15); background: #ffffff; }
+        
+        .btn-cozy { background: linear-gradient(135deg, var(--purple-main), #3b82f6); color: #fff; border: none; border-radius: 18px; padding: 12px 24px; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; width: 100%; }
+        .btn-cozy:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(108, 92, 231, 0.4); color: #fff; }
+        
+        .nav-pills .nav-link.active { background-color: var(--purple-main) !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3); }
+        .nav-pills .nav-link { color: var(--text-dark); }
+        
+        #offlineBanner { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999; display: none; width: 90%; max-width: 420px; }
 
-    #appTabsContent {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 0; 
-    }
+        /* MOBILE VIEW (Edge-to-Edge ChatGPT Style) */
+        @media (max-width: 768px) {
+            body {
+                background: #ffffff;
+                display: block;
+            }
+            .cozy-card {
+                max-width: 100% !important;
+                height: 100dvh !important;
+                border-radius: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 1rem !important;
+                margin: 0 !important;
+            }
+            .organic-blob {
+                display: none;
+            }
+        }
 
-    .tab-pane.active {
-        display: flex !important;
-        flex-direction: column;
-        flex-grow: 1;
-        min-height: 0;
-    }
+        /* SCROLLING FIX FOR CHAT WINDOW */
+        #appTabsContent {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
 
-    #chatWindow {
-        flex-grow: 1;
-        overflow-y: auto !important;
-        min-height: 0 !important;
-        padding-bottom: 15px; 
-    }
-</style>
+        .tab-pane.active {
+            display: flex !important;
+            flex-direction: column;
+            flex-grow: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        #chatWindow {
+            flex-grow: 1;
+            overflow-y: auto !important;
+            min-height: 0 !important;
+            padding-bottom: 15px;
+        }
+    </style>
 </head>
 <body>
-
     <div id="offlineBanner" class="alert alert-warning text-center shadow-lg rounded-4 py-2 border-0 fw-semibold small">
         <i class="bi bi-wifi-off me-2"></i>You are currently offline. Basic functionality remains available.
     </div>
