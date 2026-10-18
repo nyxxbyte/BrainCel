@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -8,15 +8,44 @@
     <meta name="theme-color" content="#6c5ce7">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Instant Dark Mode Check (Prevents white flash on load) -->
+    <script>
+        const savedTheme = localStorage.getItem('braincel-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+
     <style>
+        /* LIGHT MODE (Default Variables) */
         :root {
             --purple-dark: #2c1e4a;
             --purple-main: #6c5ce7;
             --purple-soft: #a88beb;
             --blue-soft: #74b9ff;
             --blue-light: #e0f7fa;
+            
             --card-bg: rgba(255, 255, 255, 0.95);
             --text-dark: #2d3436;
+            --text-muted-custom: #6c757d;
+            --mobile-bg: #ffffff;
+            --chat-bg: #f8f9fc;
+            --msg-bg: #ffffff;
+            --input-bg: #f8fafc;
+            --weather-bg: linear-gradient(to bottom right, #ffffff, #f0f3ff);
+            --border-color: rgba(108, 92, 231, 0.1);
+        }
+
+        /* DARK MODE OVERRIDES */
+        [data-theme="dark"] {
+            --card-bg: rgba(30, 30, 46, 0.95);
+            --text-dark: #e2e8f0;
+            --text-muted-custom: #94a3b8;
+            --mobile-bg: #12121c; /* Very dark blue/black for mobile edge */
+            --chat-bg: #1e1e2e;
+            --msg-bg: #2b2b40;
+            --input-bg: #2b2b40;
+            --weather-bg: linear-gradient(to bottom right, #1e1e2e, #2b2b40);
+            --border-color: rgba(255, 255, 255, 0.05);
         }
 
         /* DESKTOP VIEW (Floating 540px Card) */
@@ -30,7 +59,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden; /* Prevents background scrolling */
+            overflow: hidden; 
         }
 
         .cozy-card {
@@ -38,15 +67,16 @@
             backdrop-filter: blur(16px);
             border-radius: 28px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            border: 1px solid var(--border-color);
             width: 100%;
-            max-width: 540px; /* Locks width for desktop */
-            height: 90vh; /* Floating height for desktop */
+            max-width: 540px; 
+            height: 90vh; 
             padding: 1.5rem;
             position: relative;
             overflow: hidden;
             display: flex;
-            flex-direction: column; /* Keeps chat box at the bottom */
+            flex-direction: column; 
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         /* Component Styles */
@@ -62,8 +92,9 @@
         
         .brand-title { font-weight: 700; background: linear-gradient(45deg, var(--purple-main), #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        .custom-input { border-radius: 16px; padding: 12px 18px; border: 1.5px solid #e2e8f0; background: #f8fafc; transition: all 0.3s ease; }
-        .custom-input:focus { border-color: var(--purple-main); box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15); background: #ffffff; }
+        .custom-input { border-radius: 16px; padding: 12px 18px; border: 1.5px solid var(--border-color); background: var(--input-bg); color: var(--text-dark); transition: all 0.3s ease; }
+        .custom-input:focus { border-color: var(--purple-main); box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15); background: var(--card-bg); color: var(--text-dark); }
+        .custom-input::placeholder { color: var(--text-muted-custom); }
         
         .btn-cozy { background: linear-gradient(135deg, var(--purple-main), #3b82f6); color: #fff; border: none; border-radius: 18px; padding: 12px 24px; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; width: 100%; }
         .btn-cozy:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(108, 92, 231, 0.4); color: #fff; }
@@ -73,10 +104,14 @@
         
         #offlineBanner { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999; display: none; width: 90%; max-width: 420px; }
 
+        /* General dark mode text utility override */
+        .text-dark { color: var(--text-dark) !important; }
+        .text-muted { color: var(--text-muted-custom) !important; }
+
         /* MOBILE VIEW (Edge-to-Edge ChatGPT Style) */
         @media (max-width: 768px) {
             body {
-                background: #ffffff;
+                background: var(--mobile-bg); /* Now switches between white and dark blue */
                 display: block;
             }
             .cozy-card {
