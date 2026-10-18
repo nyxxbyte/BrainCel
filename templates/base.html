@@ -97,6 +97,27 @@
             display: none;
         }
     }
+
+    #appTabsContent {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0; 
+    }
+
+    .tab-pane.active {
+        display: flex !important;
+        flex-direction: column;
+        flex-grow: 1;
+        min-height: 0;
+    }
+
+    #chatWindow {
+        flex-grow: 1;
+        overflow-y: auto !important;
+        min-height: 0 !important;
+        padding-bottom: 15px; 
+    }
 </style>
 </head>
 <body>
